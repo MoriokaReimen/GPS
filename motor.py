@@ -133,79 +133,17 @@ class Motor(object):
 
 
 if __name__ == '__main__':
-    import matplotlib.pyplot as plt
     import sys
 
-    memo = sys.argv[1]
-
     motor = Motor()
-    #Front Weel Speed
-    plt.subplot(2, 2, 1)
-    plt.plot(motor.right_front[0], motor.right_front[1], color='r', label = 'Right')
-    plt.plot(motor.left_front[0], motor.left_front[1], color='b', label = 'Left')
-    plt.title('Front Wheel Speed')
-    plt.legend(loc = 'upper right')
-    plt.xlabel('time[sec]')
-    plt.ylabel('speed[m/s]')
 
+    buf = float(0)
 
-    #Rear Weel Speed
-    plt.subplot(2, 2, 2)
-    plt.plot(motor.right_rear[0], motor.right_rear[1], color='r', label = 'Right')
-    plt.plot(motor.left_rear[0], motor.left_rear[1], color='b', label = 'Left')
-    plt.title('Rear Wheel Speed')
-    plt.legend(loc = 'upper right')
-    plt.xlabel('time[sec]')
-    plt.ylabel('speed[m/s]')
+    for i in (motor.right_front, motor.right_rear, motor.left_front, motor.left_rear):
+        for j in xrange(len(i[0])):
+            if j == 0: dt = 0.0
+            else: dt = i[0][j] - i[0][j-1]
+            buf = buf + i[1][j] * dt
 
+    print buf / 4
 
-    #Front Weel Torque
-    plt.subplot(2, 2, 3)
-    plt.plot(motor.right_front[0], motor.right_front[2], color='r', label = 'Right')
-    plt.plot(motor.left_front[0], motor.left_front[2], color='b', label = 'Left')
-    plt.title('Front Wheel Torque')
-    plt.legend(loc = 'upper right')
-    plt.xlabel('time[sec]')
-    plt.ylabel('torque [N m]')
-
-    #Rear Weel Torque
-    plt.subplot(2, 2, 4)
-    plt.plot(motor.right_rear[0], motor.right_rear[2], color='r', label = 'Right')
-    plt.plot(motor.left_rear[0], motor.left_rear[2], color='b', label = 'Left')
-    plt.title('Rear Wheel Torque')
-    plt.legend(loc = 'upper right')
-    plt.xlabel('time[sec]')
-    plt.ylabel('torque [N m]')
-
-    figure = plt.gcf() # get current figure
-    figure.set_size_inches(20, 10)
-
-    plt.figtext(0.1, 0.0, memo)
-
-    plt.savefig("motor.png", dpi = 300)
-    #make power graph
-
-    #Front Weel Torque
-    plt.subplot(2, 1, 1)
-    plt.plot(motor.right_front[0], motor.right_front[3], color='r', label = 'Right')
-    plt.plot(motor.left_front[0], motor.left_front[3], color='b', label = 'Left')
-    plt.title('Front Wheel Power')
-    plt.legend(loc = 'upper right')
-    plt.xlabel('time[sec]')
-    plt.ylabel('Power [W]')
-
-    #Rear Weel Torque
-    plt.subplot(2, 1, 2)
-    plt.plot(motor.right_rear[0], motor.right_rear[3], color='r', label = 'Right')
-    plt.plot(motor.left_rear[0], motor.left_rear[3], color='b', label = 'Left')
-    plt.title('Rear Wheel Power')
-    plt.legend(loc = 'upper right')
-    plt.xlabel('time[sec]')
-    plt.ylabel('Power [W]')
-
-    figure = plt.gcf() # get current figure
-    figure.set_size_inches(20, 10)
-
-    plt.figtext(0.1, 0.0, memo)
-
-    plt.savefig("power.png", dpi = 300)
