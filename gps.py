@@ -1,11 +1,27 @@
 from mpl_toolkits.basemap import Basemap
 import StringIO
 import numpy
-import math
+from math import *
 import os
+import csv
 import sys
 
 class GPS(object):
+    # Function for converting a raw gps coordinate to a minute-degree format
+    def convertGPSData (self, gpsCoordinates, gpsDirection):
+        # Dictionnary for direction
+        direction = {'N':1, 'S':-1, 'E': 1, 'W':-1}
+
+        # Split the coordinates
+        temporary = gpsCoordinates.split(".")[0]
+
+        # Calculate the degrees and minutes coordinate
+        degrees = int(gpsCoordinates[:(len(temporary)-2)])
+        minutes = float(gpsCoordinates[(len(temporary)-2):])
+
+        # Return the coordiante under degree and minutes format
+        return ( degrees + minutes / 60.0 ) * direction[gpsDirection]
+
     def __init__(self, filename):
 
         # Format x[m] y[m] z[m] travel distance[m]
@@ -16,7 +32,7 @@ class GPS(object):
 
         # transform string to file object
         fbuf = StringIO.StringIO(buf)
-        self.data = list(csv.reader(fbuf, quoting=csv.QUOTE_NONNUMERIC))
+        self.data = list(csv.reader(fbuf, delimiter=','))
 
 
         for index, line in enumerate(self.data):
@@ -63,25 +79,11 @@ class GPS(object):
                 last_y = self.points[1][-1]
                 last_z = self.points[2][-1]
                 travel_distance = travel_distance + sqrt((x - last_x) ** 2 + (y - last_y) ** 2 + (z - last_z) ** 2)
-             self.points[0].append(x)
-             self.points[1].append(y)
-             self.points[2].append(z)
-             self.points[3].append(travel_distance)
+            self.points[0].append(x)
+            self.points[1].append(y)
+            self.points[2].append(z)
+            self.points[3].append(travel_distance)
 
-        # Function for converting a raw gps coordinate to a minute-degree format
-        def convertGPSData (self, gpsCoordinates, gpsDirection):
-            # Dictionnary for direction
-            direction = {'N':1, 'S':-1, 'E': 1, 'W':-1}
-
-            # Split the coordinates
-            temporary = gpsCoordinates.split(".")[0]
-
-            # Calculate the degrees and minutes coordinate
-            degrees = int(gpsCoordinates[:(len(temporary)-2)])
-            minutes = float(gpsCoordinates[(len(temporary)-2):])
-
-            # Return the coordiante under degree and minutes format
-            return ( degrees + minutes / 60.0 ) * direction[gpsDirection]
 
 if __name__ == '__main__':
     # Check if the number of arguments passed as parameter match the expected
@@ -92,4 +94,6 @@ if __name__ == '__main__':
 
     gps = GPS(sys.argv[1])
     for i in xrange(len(gps.points[0])):
-        print gps.points[0][i], gps.points[1][i], gps.points[2][i], gps.points[3][i]
+        # Format X[m] Y[m] Z[m} Travel Distance[m]
+        print "%4.5f\t%4.5f\t%4.5f\t%4.5f\t" % \
+            (gps.points[0][i], gps.points[1][i], gps.points[2][i], gps.points[3][i])
