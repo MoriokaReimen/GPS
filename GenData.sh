@@ -14,7 +14,7 @@ do
   mv -f ./distance.txt ${dir}
 
   #Clean up process
-  rm -f ./motor*.txt
+  rm -f ./${fname}
 done
 
 for f in $(find ./data/ -name "*.000" -type f);

@@ -27,8 +27,8 @@ class CSVData(object):
 
 class Motor(object):
 
-    def __init__(self):
-        self.dat = CSVData()
+    def __init__(self, filename='motor.txt'):
+        self.dat = CSVData(filename)
 
         #list for data
         #Format: time[s] velocity[m/s] torque[N m] power[W]
@@ -135,7 +135,7 @@ class Motor(object):
 if __name__ == '__main__':
     import sys
 
-    motor = Motor()
+    motor = Motor(sys.argv[1])
 
     buf = float(0)
 
