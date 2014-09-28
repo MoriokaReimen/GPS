@@ -78,7 +78,11 @@ class GPS(object):
                 last_x = self.points[0][-1]
                 last_y = self.points[1][-1]
                 last_z = self.points[2][-1]
-                travel_distance = travel_distance + sqrt((x - last_x) ** 2 + (y - last_y) ** 2 + (z - last_z) ** 2)
+                travel_distance = travel_distance + \
+                        sqrt( \
+                        (x - last_x) ** 2 + \
+                        (y - last_y) ** 2 + \
+                        (z - last_z) ** 2)
             self.points[0].append(x)
             self.points[1].append(y)
             self.points[2].append(z)
