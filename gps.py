@@ -93,7 +93,10 @@ if __name__ == '__main__':
         sys.exit(2)
 
     gps = GPS(sys.argv[1])
+    """
     for i in xrange(len(gps.points[0])):
         # Format X[m] Y[m] Z[m} Travel Distance[m]
         print "%4.5f\t%4.5f\t%4.5f\t%4.5f\t" % \
             (gps.points[0][i], gps.points[1][i], gps.points[2][i], gps.points[3][i])
+    """
+    print gps.points[3][-1]
