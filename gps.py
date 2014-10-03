@@ -114,7 +114,7 @@ class GPS(object):
                         slope_tan = 0
                     else:
                         slope_tan = - float("inf")
-            slope_angle = atan(slope_tan)
+            slope_angle = atan(slope_tan) / pi * 180.0
 
             self.points[3].append(travel_distance)
             self.points[4].append(slope_angle)
