@@ -1,6 +1,7 @@
 from mpl_toolkits.basemap import Basemap
 import StringIO
 import numpy
+from scipy.signal import butter, filtfilt
 from math import *
 import os
 import csv
@@ -71,23 +72,37 @@ class GPS(object):
             y = y - origin_y
             z = z - origin_z
 
-            #calculate travel distance
-            if index == 0:
+            self.points[0].append(x)
+            self.points[1].append(y)
+            self.points[2].append(z)
+
+        # filter the data with butterworth filter
+        num, den = butter(2, 0.01, 'low')
+
+        buff = filtfilt(num, den, self.points[0])
+        self.points[0] = buff
+        buff = filtfilt(num, den, self.points[1])
+        self.points[1] = buff
+        buff = filtfilt(num, den, self.points[2])
+        self.points[2] = buff
+
+        #calculate travel distance
+        for i in range(len(self.points[0])):
+            if i == 0:
                 travel_distance = 0.0
             else:
-                last_x = self.points[0][-1]
-                last_y = self.points[1][-1]
-                last_z = self.points[2][-1]
+                x = self.points[0][i]
+                y = self.points[1][i]
+                z = self.points[2][i]
+                last_x = self.points[0][i-1]
+                last_y = self.points[1][i-1]
+                last_z = self.points[2][i-1]
                 travel_distance = travel_distance + \
                         sqrt( \
                         (x - last_x) ** 2 + \
                         (y - last_y) ** 2 + \
                         (z - last_z) ** 2)
-            self.points[0].append(x)
-            self.points[1].append(y)
-            self.points[2].append(z)
             self.points[3].append(travel_distance)
-
 
 if __name__ == '__main__':
     # Check if the number of arguments passed as parameter match the expected
