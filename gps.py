@@ -25,8 +25,8 @@ class GPS(object):
 
     def __init__(self, filename):
 
-        # Format x[m] y[m] z[m] travel distance[m]
-        self.points = [[], [], [], []]
+        # Format x[m] y[m] z[m] travel distance[m] slope angle[degree]
+        self.points = [[], [], [], [], []]
 
         with open(filename) as f:
             buf = f.read()
@@ -90,6 +90,7 @@ class GPS(object):
         for i in range(len(self.points[0])):
             if i == 0:
                 travel_distance = 0.0
+                slope_tan = 0.0
             else:
                 x = self.points[0][i]
                 y = self.points[1][i]
@@ -102,7 +103,21 @@ class GPS(object):
                         (x - last_x) ** 2 + \
                         (y - last_y) ** 2 + \
                         (z - last_z) ** 2)
+
+                try:
+                    slope_tan = (z - last_z) / \
+                                sqrt((x - last_x) ** 2 + (y - last_y) ** 2)
+                except ZeroDivisionError:
+                    if (z - last_z) > 0:
+                        slope_tan = float("inf")
+                    elif (z - last_z) == 0:
+                        slope_tan = 0
+                    else:
+                        slope_tan = - float("inf")
+            slope_angle = atan(slope_tan)
+
             self.points[3].append(travel_distance)
+            self.points[4].append(slope_angle)
 
 if __name__ == '__main__':
     # Check if the number of arguments passed as parameter match the expected
@@ -112,8 +127,8 @@ if __name__ == '__main__':
         sys.exit(2)
 
     gps = GPS(sys.argv[1])
+    print "X[m]\tY[m]\tZ[m]\tTravel Distance[m]\tSlope Angle[degree]"
     for i in xrange(len(gps.points[0])):
-        # Format X[m] Y[m] Z[m} Travel Distance[m]
-        print "%4.5f\t%4.5f\t%4.5f\t%4.5f\t" % \
-            (gps.points[0][i], gps.points[1][i], gps.points[2][i], gps.points[3][i])
-    #print gps.points[3][-1]
+        # Format X[m] Y[m] Z[m] Travel Distance[m]
+        print "%4.5f\t%4.5f\t%4.5f\t%4.5f\t%4.5f" % \
+            (gps.points[0][i], gps.points[1][i], gps.points[2][i], gps.points[3][i], gps.points[4][i])
