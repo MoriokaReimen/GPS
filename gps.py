@@ -77,7 +77,7 @@ class GPS(object):
             self.points[2].append(z)
 
         # filter the data with butterworth filter
-        num, den = butter(2, 0.01, 'low')
+        num, den = butter(2, 0.05, 'low')
 
         buff = filtfilt(num, den, self.points[0])
         self.points[0] = buff
