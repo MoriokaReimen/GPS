@@ -52,7 +52,6 @@ class GPS(object):
         Args:
             filename (str): path of *.000 file.
         """
-
         # Format x[m] y[m] z[m]
         self.points = [[], [], []]
 
@@ -62,7 +61,7 @@ class GPS(object):
         # transform file object to list
         self.data = list(csv.reader(buf, delimiter=','))
 
-        for index, line in enumerate(self.data):
+        for index, line in enumerate(filter(lambda line: not '' in line,self.data)):
             # Get the latitude coordinate
             latitude_str = str(line[2])
             latitude_direction = str(line[3])
