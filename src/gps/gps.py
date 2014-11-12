@@ -93,7 +93,7 @@ class GPS(object):
                 origin = [point[0], point[1], point[2]]
 
             # off set data
-            point -= origin
+            point = [point[i] - origin[i] for i in range(len(point))]
 
             self.points[0].append(point[0])
             self.points[1].append(point[1])
