@@ -141,7 +141,7 @@ if __name__ == '__main__':
         sys.exit(2)
 
     DATA = GPS(sys.argv[1])
-    DATA.filt_points(0.0001)
+    #DATA.filt_points(0.00001)
     print "X[m]\tY[m]\tZ[m]\tTravel Distance[m]\tSlope Angle[degree]"
     for i in xrange(len(DATA.points[0])):
         # Format X[m] Y[m] Z[m]
