@@ -61,7 +61,8 @@ class GPS(object):
         # transform file object to list
         self.data = list(csv.reader(buf, delimiter=','))
 
-        for index, line in enumerate(filter(lambda line: not '' in line,self.data)):
+        #for index, line in enumerate(filter(lambda line: not '' in line,self.data)):
+        for index, line in enumerate(self.data):
             # Get the latitude coordinate
             latitude_str = str(line[2])
             latitude_direction = str(line[3])
@@ -140,8 +141,10 @@ if __name__ == '__main__':
         sys.exit(2)
 
     DATA = GPS(sys.argv[1])
+    DATA.filt_points(0.0001)
     print "X[m]\tY[m]\tZ[m]\tTravel Distance[m]\tSlope Angle[degree]"
     for i in xrange(len(DATA.points[0])):
         # Format X[m] Y[m] Z[m]
         print "%4.5f\t%4.5f\t%4.5f" % \
             (DATA.points[0][i], DATA.points[1][i], DATA.points[2][i])
+    print DATA.calc_travel_distance()
