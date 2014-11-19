@@ -1,9 +1,9 @@
 #! /bin/python
 # -*- coding: utf-8 -*-
 """ gps.py
-Convert *.000 file and Output as a tsb file.
+Convert *.000 file and Output as a thb file.
 USAGE:
-    $ python gps.py hogehoge.000 > Outputfile.tsb
+    $ python gps.py hogehoge.000 > Outputfile.thb
 """
 import mpl_toolkits.basemap as mpl
 import StringIO
@@ -13,30 +13,48 @@ import csv
 import sys
 
 
-def to_ddmm(gps_coordinates, gps_direction):
+def conv_latitude(raw_latitude, raw_direction):
     """
-    Private function for converting a raw gps coordinate to a
-    minute-degree format
+    Function for converting a raw latitude to a
+    degree-minute format
     Args:
-        gps_coordinates (float): coordinate of gps data
-        gps_direction (float): direction of gps data
+        raw_latitude (string): latitude
+        raw_direction (float): 'N' or 'S'
 
     Returns:
         float: coordinate in degree and minutes format
     """
     # Dictionnary for direction
-    direction = {'N': 1, 'S': -1, 'E': 1, 'W': -1}
-
-    # Split the coordinates
-    temporary = gps_coordinates.split(".")[0]
+    direction = {'N': 1, 'S': -1}
 
     # Calculate the degrees and minutes coordinate
-    degrees = int(gps_coordinates[:(len(temporary) - 2)])
-    minutes = float(gps_coordinates[(len(temporary) - 2):])
+    degrees = float(raw_latitude[:2])
+    minutes = float(raw_latitude[2:])
 
     # Return the coordiante under degree and minutes format
-    return (degrees + minutes / 60.0) * direction[gps_direction]
+    return (degrees + minutes / 60.0) * direction[raw_direction]
 
+
+def conv_longitude(raw_longitude, raw_direction):
+    """
+    Private function for converting a raw longitude to a
+    degree-minute format
+    Args:
+        raw_longitude (string): raw longitude
+        raw_direction (float): 'E' or 'W'
+
+    Returns:
+        float: coordinate in degree and minutes format
+    """
+    # Dictionnary for direction
+    direction = {'E': 1, 'W': -1}
+
+    # Calculate the degrees and minutes coordinate
+    degrees = float(raw_longitude[:3])
+    minutes = float(raw_longitude[3:])
+
+    # Return the coordiante under degree and minutes format
+    return (degrees + minutes / 60.0) * direction[raw_direction]
 
 class GPS(object):
 
@@ -55,13 +73,11 @@ class GPS(object):
         # Format x[m] y[m] z[m]
         self.points = [[], [], []]
 
-        with open(filename) as file000:
-            buf = StringIO.StringIO(file000.read())
-
         # transform file object to list
-        self.data = list(csv.reader(buf, delimiter=','))
+        with open(filename) as file000:
+            self.data = list(csv.reader(StringIO.StringIO(file000.read()),
+                                        delimiter=','))
 
-        #for index, line in enumerate(filter(lambda line: not '' in line,self.data)):
         for index, line in enumerate(self.data):
             # Get the latitude coordinate
             latitude_str = str(line[2])
@@ -72,8 +88,8 @@ class GPS(object):
             longitude_direction = str(line[5])
 
             # Convert the raw gps coordinates to the degrees-minutes format
-            latitude = to_ddmm(latitude_str, latitude_direction)
-            longitude = to_ddmm(longitude_str, longitude_direction)
+            latitude = conv_latitude(latitude_str, latitude_direction)
+            longitude = conv_longitude(longitude_str, longitude_direction)
 
             # Set up the projection to convert longitude/latitude to X/Y axis
             if index == 0:
@@ -93,7 +109,7 @@ class GPS(object):
                 origin = [point[0], point[1], point[2]]
 
             # off set data
-            point = [point[i] - origin[i] for i in range(len(point))]
+            point = [point[j] - origin[j] for j in range(len(point))]
 
             self.points[0].append(point[0])
             self.points[1].append(point[1])
@@ -141,7 +157,7 @@ if __name__ == '__main__':
         sys.exit(2)
 
     DATA = GPS(sys.argv[1])
-    #DATA.filt_points(0.00001)
+    # DATA.filt_points(0.00001)
     print "X[m]\tY[m]\tZ[m]\tTravel Distance[m]\tSlope Angle[degree]"
     for i in xrange(len(DATA.points[0])):
         # Format X[m] Y[m] Z[m]
