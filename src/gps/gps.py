@@ -11,6 +11,7 @@ import scipy.signal as sp
 import math
 import csv
 import sys
+import ecef
 
 
 def conv_latitude(raw_latitude, raw_direction):
@@ -90,6 +91,11 @@ class GPS(object):
             # Convert the raw gps coordinates to the degrees-minutes format
             latitude = conv_latitude(latitude_str, latitude_direction)
             longitude = conv_longitude(longitude_str, longitude_direction)
+            height = float(line[9])
+
+            ecef_point = ecef.blh2ecef(longitude, latitude, height)
+            print longitude, latitude, height
+            print ecef_point.x, ecef_point.y, ecef_point.z
 
             # Set up the projection to convert longitude/latitude to X/Y axis
             if index == 0:
@@ -102,7 +108,7 @@ class GPS(object):
             # Format:
             #   [xposition, ypostion zposition]
             point = list(projection(longitude, latitude))
-            point += [float(line[9])]
+            point += [height]
 
             # record initial position
             if index == 0:
@@ -156,7 +162,10 @@ if __name__ == '__main__':
         print ("Usage: {} raw-gps-data-file".format(sys.argv[0]))
         sys.exit(2)
 
+
     DATA = GPS(sys.argv[1])
+    print
+    print
     # DATA.filt_points(0.00001)
     print "X[m]\tY[m]\tZ[m]\tTravel Distance[m]\tSlope Angle[degree]"
     for i in xrange(len(DATA.points[0])):
