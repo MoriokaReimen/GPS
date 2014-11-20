@@ -19,13 +19,13 @@ double toRad(const double& degree)
 XYZ blh2ecef(const double& longitude, const double& latitude, const double& height)
 {
   XYZ ecef;
-  const double f = 1 / 298.257223563;
-  const double e = sqrt(2 * f - f * f);
-  double N = 6378137.0 / sqrt(1 - e * e * sin(longitude));
+  const double f = 1.0 / 298.257223563;
+  const double e = sqrt(2.0 * f - f * f);
+  double N = 6378137.0 / sqrt(1.0 - e * e * sin(toRad(latitude)) * sin(toRad(latitude)));
 
   ecef.x = (N + height) * cos(toRad(longitude)) * cos(toRad(latitude));
-  ecef.y = (N + height) * cos(toRad(longitude)) * sin(toRad(latitude));
-  ecef.z = (N * (1 - e * e) + height) * sin(toRad(longitude));
+  ecef.y = (N + height) * sin(toRad(longitude)) * cos(toRad(latitude));
+  ecef.z = ((N * (1.0 - e * e)) + height) * sin(toRad(latitude));
 
   return ecef;
 }
