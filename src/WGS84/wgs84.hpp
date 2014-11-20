@@ -1,11 +1,10 @@
 #pragma once
 #include <boost/python.hpp>
 
-struct XYZ
-{
-  double x{0};
-  double y{0};
-  double z{0};
+struct XYZ {
+        double x {0};
+        double y {0};
+        double z {0};
 };
 
 double toDeg(const double& radian);

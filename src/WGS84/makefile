@@ -1,13 +1,13 @@
-blh2ecef.o: blh2ecef.cpp
-	g++ -std=c++11 -Wall -fPIC -DPIC -I. -I /usr/include/python2.6/ -c blh2ecef.cpp
+wgs84.o: wgs84.cpp
+	g++ -std=c++11 -Wall -fPIC -DPIC -I. -I /usr/include/python2.6/ -c wgs84.cpp
 
-ecef.o: ecef.cpp
-	g++ -std=c++11 -Wall -fPIC -DPIC -I. -I /usr/include/python2.6/ -c ecef.cpp
+python_wgs84.o: python_wgs84.cpp
+	g++ -std=c++11 -Wall -fPIC -DPIC -I. -I /usr/include/python2.6/ -c python_wgs84.cpp
 
-ecef.so: ecef.o blh2ecef.o
-	g++ -shared -fPIC -DPIC ecef.o blh2ecef.o -L/usr/lib/ -lboost_python -L/usr/lib/python2.6/ -lpython2.6 -o ecef.so
+wgs84.so: python_wgs84.o wgs84.o
+	g++ -shared -fPIC -DPIC python_wgs84.o wgs84.o -L/usr/lib/ -lboost_python -L/usr/lib/python2.6/ -lpython2.6 -o wgs84.so
 
-all: ecef.so
+all: wgs84.so
 
 clean:
 	rm -f *.o *.so
