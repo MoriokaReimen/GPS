@@ -1,7 +1,7 @@
-wgs84.o: wgs84.cpp
+wgs84.o: wgs84.cpp wgs84.hpp
 	g++ -std=c++11 -Wall -fPIC -DPIC -I. -I /usr/include/python2.6/ -c wgs84.cpp
 
-python_wgs84.o: python_wgs84.cpp
+python_wgs84.o: python_wgs84.cpp wgs84.hpp
 	g++ -std=c++11 -Wall -fPIC -DPIC -I. -I /usr/include/python2.6/ -c python_wgs84.cpp
 
 wgs84.so: python_wgs84.o wgs84.o

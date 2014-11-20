@@ -1,13 +1,15 @@
 #include "wgs84.hpp"
+#include <vector>
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 using namespace boost::python;
+using std::vector;
 
-BOOST_PYTHON_MODULE(ecef)
+BOOST_PYTHON_MODULE(wgs84)
 {
-        class_<XYZ>("XYZ")
-        .def_readwrite("x", &XYZ::x)
-        .def_readwrite("y", &XYZ::y)
-        .def_readwrite("z", &XYZ::z);
-
-        def("blh2ecef", blh2ecef);
+        def("llh2ecef", llh2ecef);
+        def("ecef2llh", ecef2llh);
+        class_<vector<double>>("vector<double>")
+          .def(vector_indexing_suite<vector<double>>());
 }
 
