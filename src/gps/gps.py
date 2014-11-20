@@ -11,7 +11,7 @@ import scipy.signal as sp
 import math
 import csv
 import sys
-import ecef
+import wgs84
 
 
 def conv_latitude(raw_latitude, raw_direction):
@@ -93,9 +93,8 @@ class GPS(object):
             longitude = conv_longitude(longitude_str, longitude_direction)
             height = float(line[9])
 
-            ecef_point = ecef.blh2ecef(longitude, latitude, height)
-            print longitude, latitude, height
-            print ecef_point.x, ecef_point.y, ecef_point.z
+            ecef = wgs84.llh2ecef(longitude, latitude, height)
+            print ecef[0], ecef[1], ecef[2]
 
             # Set up the projection to convert longitude/latitude to X/Y axis
             if index == 0:
