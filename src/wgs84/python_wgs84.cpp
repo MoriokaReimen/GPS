@@ -45,6 +45,6 @@ BOOST_PYTHON_MODULE(wgs84)
         def("llh2ecef", llh2ecef);
         def("ecef2llh", ecef2llh);
         class_<vector<double>>("vector<double>")
-          .def(vector_indexing_suite<vector<double>>());
+                            .def(vector_indexing_suite<vector<double>>());
 }
 

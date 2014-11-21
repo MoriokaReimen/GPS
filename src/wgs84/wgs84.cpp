@@ -39,7 +39,7 @@
 using std::sqrt;
 using std::sin;
 using std::cos;
-using std::atan;
+using std::atan2;
 using std::vector;
 using std::copysign;
 /**
@@ -48,8 +48,8 @@ using std::copysign;
 const double A = 6378137.0; /**< Equational Radius [m] */
 const double B = 6356752.3142; /**< Polar Radius [m]  */
 const double F = 1.0 / 298.257223563; /**< flattening */
-const double E = sqrt(2.0 * F - F * F); /**< Eccentricity */
-const double Er = sqrt((A * A - B * B)/ B * B); /**<  Second Eccentricity */
+const double E = sqrt((A * A - B * B)/(A * A)); /**< Eccentricity */
+const double Er = sqrt((A * A - B * B)/(B * B)); /**< Second Eccentricity */
 
 /*!
  * Convert radian to degree
@@ -99,29 +99,31 @@ vector<double> llh2ecef(const double& longitude, const double& latitude, const d
  */
 vector<double> ecef2llh(const double& x, const double& y, const double& z)
 {
-        double longitude{0.0}; /*< longitude in radian */
-        double latitude{0.0}; /*< latitude in radian */
-        double height{0.0}; /*< height in meter */
+        double longitude {0.0}; /*< longitude in radian */
+        double latitude {0.0}; /*< latitude in radian */
+        double height {0.0}; /*< height in meter */
 
-        double p = sqrt(x * x + y * y);
-        double theta = atan(z * A / p / B);
+        double p = sqrt((x * x) + (y * y));
+        double theta = atan2((z * A), (p * B));
 
         /* Avoid 0 division error */
-        if(x == 0.0 && y == 0.0)
-        {
-          vector<double>
-            llh{0.0, copysign(90.0,z), z - copysign(B,z)};
+        if(x == 0.0 && y == 0.0) {
+                vector<double>
+                llh {0.0, copysign(90.0,z), z - copysign(B,z)};
+                return llh;
+        } else {
+
+                latitude = atan2(
+                                   (z + (Er * Er * B * pow(sin(theta), 3))),
+                                   (p - (E * E * A * pow(cos(theta), 3)))
+                           );
+                longitude = atan2(y, x);
+                double n = A / sqrt(1.0 - E * E * sin(latitude) * sin(latitude));
+                height = p / cos(latitude) - n;
+
+                vector<double>
+                llh {toDeg(longitude), toDeg(latitude), height};
+
+                return llh;
         }
-
-        latitude = atan(
-            (z + Er * Er * B * pow(sin(theta), 3)) /
-            (p - E * E * A * pow(cos(theta), 3)));
-        longitude = atan(y / x);
-        double n = A / sqrt(1.0 - E * E * sin(latitude) * sin(latitude));
-        height = p / cos(latitude) - n;
-
-        vector<double>
-          llh{toDeg(longitude), toDeg(latitude), height};
-
-        return llh;
 }
