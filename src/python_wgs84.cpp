@@ -40,7 +40,7 @@
 using namespace boost::python;
 using std::vector;
 
-BOOST_PYTHON_MODULE(wgs84)
+BOOST_PYTHON_MODULE(pywgs84)
 {
         def("llh2ecef", llh2ecef);
         def("ecef2llh", ecef2llh);
