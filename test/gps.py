@@ -11,7 +11,8 @@ import scipy.signal as sp
 import math
 import csv
 import sys
-import wgs84
+sys.path.append("../lib")
+import pywgs84
 
 
 def conv_latitude(raw_latitude, raw_direction):
